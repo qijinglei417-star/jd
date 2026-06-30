@@ -51,9 +51,13 @@ p { color: #888; font-size: 14px; line-height: 1.6; margin: 8px 0; }
     return;
   }
 
-  // 兼容 base64 编码
+  // 解码:先 base64-url 解,再回退普通 URL
   if (u.indexOf('http') !== 0) {
-    try { u = atob(u); } catch (e) {}
+    try {
+      var b64 = u.replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      u = decodeURIComponent(escape(atob(b64)));
+    } catch (e) {}
   }
 
   if (u.indexOf('http') !== 0) {
